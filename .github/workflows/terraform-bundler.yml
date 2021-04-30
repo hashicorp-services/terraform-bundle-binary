@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        terraform_core_version: [0.12.31, 0.15.1]
+        terraform_core_version: [v0.12.31, v0.15.1]
     steps:
       - uses: actions/setup-go@v2
         with:
@@ -21,5 +21,11 @@ jobs:
           repository: 'hashicorp/terraform'
           persist-credentials: 'false'
           ref: ${{ matrix.terraform_core_version }}
-          path: my-tools
-        
+          path: terraform
+          #token: ''
+      - run: |
+          cd terraform
+          go install -v ./tools/terraform-bundle
+          cd $GOPATH/bin
+          terraform-bundle --version
+          #cp $GOPATH/bin/terraform-bundle $GITHUB_WORKSPACE
