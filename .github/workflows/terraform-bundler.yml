@@ -1,0 +1,23 @@
+name: Build terraform bundler
+
+on:
+  # Every push will run this action
+  push:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        terraform_core_version: [0.12.31, 0.15.1]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v1
+        with:
+          go-version: '1.9.3'
+      - name: Setup terraform
+        run: |
+          git clone --branch ${terraform_core_version} --depth 1 https://github.com/hashicorp/terraform.git
+          cd terraform && go install ./tools/terraform-bundle
