@@ -13,11 +13,13 @@ jobs:
       matrix:
         terraform_core_version: [0.12.31, 0.15.1]
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-go@v1
+      - uses: actions/setup-go@v2
         with:
-          go-version: '1.9.3'
-      - name: Setup terraform
-        run: |
-          git clone --branch ${terraform_core_version} --depth 1 https://github.com/hashicorp/terraform.git
-          cd terraform && go install ./tools/terraform-bundle
+          go-version: '1.12.13'
+      - uses: actions/checkout@v2
+        with:
+          repository: 'hashicorp/terraform'
+          persist-credentials: 'false'
+          ref: ${terraform_core_version}
+          path: my-tools
+        
