@@ -20,6 +20,6 @@ jobs:
         with:
           repository: 'hashicorp/terraform'
           persist-credentials: 'false'
-          ref: ${terraform_core_version}
+          ref: ${{ matrix.terraform_core_version }}
           path: my-tools
         
