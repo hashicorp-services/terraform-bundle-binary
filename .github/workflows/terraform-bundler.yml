@@ -11,8 +11,14 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        terraform_core_version: [v0.12.31, v0.15.1]
+        terraform_core_version: [v0.12.31]
     steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: 'hashicorp-services/terraform-bundler'
+          persist-credentials: 'false'
+          path: terraform-bundler
+          #token: 'when testing locally, an oath token is required'
       - uses: actions/setup-go@v2
         with:
           go-version: '1.12.13'
@@ -22,10 +28,15 @@ jobs:
           persist-credentials: 'false'
           ref: ${{ matrix.terraform_core_version }}
           path: terraform
-          #token: ''
+          #token: 'when testing locally, an oath token is required'
       - run: |
           cd terraform
           go install -v ./tools/terraform-bundle
-          cd $GOPATH/bin
-          terraform-bundle --version
-          #cp $GOPATH/bin/terraform-bundle $GITHUB_WORKSPACE
+          cd ../..
+          mv home/go/bin/terraform-bundle terraform-bundler/terraform-bundler/${{ matrix.terraform_core_version }}/
+          cd terraform-bundler/terraform-bundler/
+          git config --global user.email "team-is@hashicorp.com" 
+          git config --global user.name "GitHub Action"
+          git add * 
+          git commit -m "bundle creation" 
+          git push
