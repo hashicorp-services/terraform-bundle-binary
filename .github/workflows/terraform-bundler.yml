@@ -49,9 +49,9 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           artifacts: "./artifacts/*"
-          body: "body text"
+          body: "initial release"
           allowUpdates: true
-          draft: true
-          tag: "v0.0.0-alpha"
+          draft: false
+          tag: "v0.0.1"
           token: ${{ secrets.GITHUB_TOKEN }}
       
