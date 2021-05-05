@@ -37,7 +37,7 @@ jobs:
           gox \
             -os="linux darwin windows" \
             -arch="amd64" \
-            -output "/bundle/{{.OS}}_{{.Arch}}/terraform-bundle" \
+            -output "./bundle/{{.OS}}_{{.Arch}}/terraform-bundle" \
             ./terraform/tools/terraform-bundle
       - name: Prepare artifacts
         run: |
