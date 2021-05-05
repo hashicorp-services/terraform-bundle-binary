@@ -1,7 +1,7 @@
-name: Build terraform bundler
+name: Compile terraform-bundle tool
 
 on:
-  # Every push will run this action
+  # Every push will run this action TODO: maybe by tag instead?
   push:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -13,33 +13,45 @@ jobs:
       matrix:
         terraform_core_version: [v0.12.31, v0.15.1]
     steps:
-      - uses: actions/checkout@v2
+      - name: Install Go
+        uses: actions/setup-go@v2
         with:
-          repository: 'hashicorp-services/terraform-bundler'
-          persist-credentials: 'false'
-          path: terraform-bundler
-          #token: 'when testing locally, an oath token is required'
-      - uses: actions/setup-go@v2
-        with:
-          go-version: '1.12.13'
-      - uses: actions/checkout@v2
+          go-version: '1.14.10'
+      - name: Install zip #TODO: there is an easier way i am sure...
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install zip -q
+      - name: Install gox
+        run: go get github.com/mitchellh/gox
+      - name: Checkout Terraform Bundler code
+        uses: actions/checkout@v2
         with:
           repository: 'hashicorp/terraform'
           persist-credentials: 'false'
+          fetch-depth: 1
           ref: ${{ matrix.terraform_core_version }}
           path: terraform
-          #token: 'when testing locally, an oath token is required'
-      - run: |
-          pwd
-          cd terraform
-          go install -v ./tools/terraform-bundle
-          cd ../..
-          pwd
-          whereis terraform-bundle
-        #mv home/go/bin/terraform-bundle terraform-bundler/terraform-bundler/${{ matrix.terraform_core_version }}/
-        #cd terraform-bundler/terraform-bundler/
-        #git config --global user.email "team-is@hashicorp.com" 
-        #git config --global user.name "GitHub Action"
-        #git add * 
-         #git commit -m "bundle creation" 
-         #git push
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Cross compile terraform-bundle
+        run: |
+          gox \
+            -os="linux darwin windows" \
+            -arch="amd64" \
+            -output "./bundle/{{.OS}}_{{.Arch}}/terraform-bundle" \
+            ./terraform/tools/terraform-bundle
+      - name: Prepare artifacts
+        run: |
+          mkdir ./artifacts
+          zip -j ./artifacts/terraform-bundle_${{ matrix.terraform_core_version }}_darwin_amd64.zip ./bundle/darwin_amd64/terraform-bundle
+          zip -j ./artifacts/terraform-bundle_${{ matrix.terraform_core_version }}_linux_amd64.zip ./bundle/linux_amd64/terraform-bundle
+          zip -j ./artifacts/terraform-bundle_${{ matrix.terraform_core_version }}_windows_amd64.zip ./bundle/windows_amd64/terraform-bundle.exe
+      - name: Create Release Draft
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "./artifacts/*"
+          body: "body text"
+          allowUpdates: true
+          draft: true
+          tag: "v0.0.0-alpha"
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
