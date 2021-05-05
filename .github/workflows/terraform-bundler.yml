@@ -1,8 +1,6 @@
 name: Compile terraform-bundle tool
 
 on:
-  # Every push will run this action TODO: maybe by tag instead?
-  push:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -49,9 +47,9 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           artifacts: "./artifacts/*"
-          body: "body text"
+          body: "initial release"
           allowUpdates: true
           draft: true
-          tag: "v0.0.0-alpha"
+          tag: "v0.0.1"
           token: ${{ secrets.GITHUB_TOKEN }}
       
