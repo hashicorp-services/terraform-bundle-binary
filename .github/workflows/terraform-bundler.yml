@@ -19,8 +19,8 @@ jobs:
           go-version: '1.14.10'
       - name: Install zip #TODO: there is an easier way i am sure...
         run: |
-          apt-get update -q
-          apt-get install zip -q
+          sudo apt-get update -q
+          sudo apt-get install zip -q
       - name: Install gox
         run: go get github.com/mitchellh/gox
       - name: Checkout Terraform Bundler code
