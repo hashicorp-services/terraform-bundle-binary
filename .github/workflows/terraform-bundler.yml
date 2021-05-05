@@ -41,14 +41,14 @@ jobs:
             ./terraform/tools/terraform-bundle
       - name: Prepare artifacts
         run: |
-          sudo mkdir /artifacts && cd /artifacts
-          sudo zip -j terraform-bundle_${{ matrix.terraform_core_version }}_darwin_amd64.zip /bundle/darwin_amd64/terraform-bundle
-          sudo zip -j terraform-bundle_${{ matrix.terraform_core_version }}_linux_amd64.zip /bundle/linux_amd64/terraform-bundle
-          sudo zip -j terraform-bundle_${{ matrix.terraform_core_version }}_windows_amd64.zip /bundle/windows_amd64/terraform-bundle.exe
+          mkdir ./artifacts
+          zip -j ./artifacts/terraform-bundle_${{ matrix.terraform_core_version }}_darwin_amd64.zip ./bundle/darwin_amd64/terraform-bundle
+          zip -j ./artifacts/terraform-bundle_${{ matrix.terraform_core_version }}_linux_amd64.zip ./bundle/linux_amd64/terraform-bundle
+          zip -j ./artifacts/terraform-bundle_${{ matrix.terraform_core_version }}_windows_amd64.zip ./bundle/windows_amd64/terraform-bundle.exe
       - name: Create Release Draft
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "/artifacts/*"
+          artifacts: "./artifacts/*"
           body: "body text"
           allowUpdates: true
           draft: true
