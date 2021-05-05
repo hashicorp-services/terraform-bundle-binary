@@ -11,3 +11,8 @@ This repo will use GitHub actions to build `terraform-bundle` for Linux, MacOS, 
 ## .github
 
 Contains the GitHub Action which will build the terraform-bundle binaries
+
+## Using Terraform Bundle for Terraform Enterprise
+
+If building a bundle for TFE, the command and arguments to use is `terraform-bundle -os=linux -arch=amd64`
+For more detailed usage instructions <https://github.com/hashicorp/terraform/tree/v0.15.1/tools/terraform-bundle#usage>
