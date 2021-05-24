@@ -11,7 +11,7 @@ This repo will use GitHub actions to build `terraform-bundle` for Linux, MacOS, 
 `terraform-bundle` can be downloaded from the releases section of this repo or via cli, 
 
 ```sh
-version="0.0.2"
+version="0.1.0"
 curl -L -o terraform-bundle "https://github.com/hashicorp-services/terraform-bundle-binary/releases/download/${version}/terraform_bundle_linux_amd64_v0.15.4"
 chmod +x terraform-bundle
 ```
