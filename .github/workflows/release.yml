@@ -1,0 +1,84 @@
+# After a release has been created, this will compile Terraform Bundle from source and upload the compiled binaries to the targets release
+name: release
+
+on:
+  release:
+    types:
+      - published
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        terraform_core_version: [v0.12.31, v0.15.1]
+    steps:
+      - name: Make tag
+        run: echo "TAG_NAME=${GITHUB_REF##*/}" >> $GITHUB_ENV
+
+      - name: Get release
+        id: get_release
+        uses: bruceadams/get-release@v1.2.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Install Go environment for build
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.14.10
+      
+      # gox is simple go cross complication tool
+      - name: Install gox
+        run: go get github.com/mitchellh/gox
+      
+      # Checkout the specified version of Terraform
+      - name: Checkout Terraform Bundle code
+        uses: actions/checkout@v2
+        with:
+          repository: 'hashicorp/terraform'
+          persist-credentials: 'false'
+          fetch-depth: 1
+          ref: ${{ matrix.terraform_core_version }}
+          path: terraform
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      # Run the complile
+      - name: Cross compile terraform-bundle
+        run: |
+          gox \
+            -os="linux darwin windows" \
+            -arch="amd64" \
+            -output "./bundle/${{ matrix.terraform_core_version }}/{{.OS}}_{{.Arch}}/terraform-bundle" \
+            ./terraform/tools/terraform-bundle
+      
+      # Upload the compiled binary for each arch to the release
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: ./bundle/${{ matrix.terraform_core_version }}/darwin_amd64/terraform-bundle
+          asset_name: terraform_bundle_darwin_amd64_${{ matrix.terraform_core_version }}
+          asset_content_type: application/octet-stream
+      
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: ./bundle/${{ matrix.terraform_core_version }}/linux_amd64/terraform-bundle
+          asset_name: terraform_bundle_linux_amd64_${{ matrix.terraform_core_version }}
+          asset_content_type: application/octet-stream
+      
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: ./bundle/${{ matrix.terraform_core_version }}/windows_amd64/terraform-bundle.exe
+          asset_name: terraform_bundle_windows_amd64_${{ matrix.terraform_core_version }}
+          asset_content_type: application/octet-stream
