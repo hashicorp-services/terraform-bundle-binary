@@ -24,3 +24,8 @@ Contains the GitHub Action which will build the terraform-bundle binaries
 
 If building a bundle for TFE, the command and arguments to use is `terraform-bundle -os=linux -arch=amd64`
 For more detailed usage instructions <https://github.com/hashicorp/terraform/tree/v0.15.4/tools/terraform-bundle#usage>
+
+## Community Support
+
+Support for this tool is provided on a best-effort basis, and it comes with no guarantee or service level agreement. Bugs and feature requests should be entered as GitHub issues. If an existing issue matches your requirements, please add a +1 reaction to bump it up our priority list.
+Pull requests are welcome! We encourage you to fork this repository and send back a PR with any improvements.
