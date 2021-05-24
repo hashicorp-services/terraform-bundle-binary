@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        terraform_core_version: [v0.12.31, v0.15.1]
+        terraform_core_version: [v0.12.31, v0.15.4]
     steps:
       - name: Make tag
         run: echo "TAG_NAME=${GITHUB_REF##*/}" >> $GITHUB_ENV
