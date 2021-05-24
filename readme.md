@@ -18,7 +18,7 @@ chmod +x terraform-bundle
 
 ## .github
 
-Contains the GitHub Action which will build the terraform-bundle binaries
+Contains the GitHub Actions which will build the terraform-bundle binaries
 
 ## Using Terraform Bundle for Terraform Enterprise
 
